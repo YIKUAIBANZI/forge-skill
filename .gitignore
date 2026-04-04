@@ -1,0 +1,22 @@
+# 替身数据——个人隐私，不提交
+standins/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# 测试用的素材文件
+*.txt.bak
+test_data/
