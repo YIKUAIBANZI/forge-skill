@@ -60,8 +60,8 @@ Phase 3: 综合呈现（共识、分歧、代价清单）
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/standin-skill.git
-cd standin-skill
+git clone https://github.com/your-username/forge-skill.git
+cd forge-skill
 
 # 安装依赖（仅素材解析功能需要）
 pip install -r requirements.txt
@@ -135,7 +135,7 @@ Claude 会开始四轮对话采集：
 ## 项目结构
 
 ```
-standin-skill/
+forge-skill/
 ├── create-standin/           # 创建替身 Skill
 │   ├── SKILL.md
 │   ├── prompts/

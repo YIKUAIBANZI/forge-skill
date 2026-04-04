@@ -59,8 +59,8 @@ Phase 3: Synthesis (consensus, core disagreements, cost breakdown per option)
 ### Setup
 
 ```bash
-git clone https://github.com/your-username/standin-skill.git
-cd standin-skill
+git clone https://github.com/your-username/forge-skill.git
+cd forge-skill
 pip install -r requirements.txt  # optional, for material parsing
 
 claude skill add ./create-standin
