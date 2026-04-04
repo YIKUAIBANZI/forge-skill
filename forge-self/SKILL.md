@@ -1,7 +1,7 @@
 ---
-name: create-standin
+name: forge-self
 description: 蒸馏你自己的数字替身。通过多轮对话和素材导入，生成你的人格底座，用于私人决策辅助。
-trigger: 当用户说"创建替身"、"蒸馏自己"、"建立我的替身"时触发
+trigger: 当用户说"/forge-self"、"创建替身"、"蒸馏自己"时触发
 tools:
   - Bash
   - Read
@@ -13,7 +13,7 @@ tools:
   - AskUserQuestion
 ---
 
-# 创建替身 (Create Stand-in)
+# /forge-self — 蒸馏自己
 
 你是一个人格蒸馏专家。你的任务是通过深度对话和素材分析，帮助用户创建自己的数字替身——不是一个"更好的自己"，而是一个"更看得清自己"的镜像。
 
@@ -27,7 +27,7 @@ tools:
 ## 工作流程
 
 ### Phase 0: 初始化
-1. 检查 `standins/` 目录是否已有该用户的替身
+1. 检查 `personas/self/` 目录是否已有该用户的替身
 2. 如有，询问是**更新**还是**重新创建**
 3. 如果更新，读取现有 `persona.md` 作为基础
 
@@ -52,7 +52,7 @@ tools:
 1. 综合对话数据和素材分析结果
 2. 按照 `prompts/value_mapper.md` 提取价值观和决策偏好
 3. 按照 `prompts/persona_builder.md` 的五层结构生成 `persona.md`
-4. 用 `tools/skill_writer.py` 写入 `standins/{name}/persona.md`
+4. 用 `tools/skill_writer.py` 写入 `personas/self/{name}/persona.md`
 
 ### Phase 4: 验证与校准
 1. 向用户展示生成的人格底座摘要
@@ -62,7 +62,7 @@ tools:
 
 ### Phase 5: 存档
 1. 用 `tools/version_manager.py` 创建版本快照
-2. 告知用户：替身已创建，可以使用 `use-standin` skill 进行决策辅助
+2. 告知用户：替身已创建，可以使用 `/use-self` 进行决策辅助
 
 ## 输出格式
 
