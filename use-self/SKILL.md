@@ -57,31 +57,23 @@ tools:
 
 **特殊模式**：如果用户说"和过去的自己比较" → 激活 `prompts/time_compare.md`
 
-### Step 2: 情境分析与变体生成
+### Step 2 & 3: 替身会议（多 Agent 协作）
 
-按照 `prompts/variant_generator.md` 执行：
-1. 分析场景中的核心张力（结合模板的预设矛盾轴，若有）
-2. 基于用户人格底座 + 核心张力，生成 3-4 个变体
-3. 向用户展示变体阵容
+将决策场景 + 用户 persona 交给主持人 agent，由 `prompts/moderator.md` 完整协调整个替身会议：
 
-```
-基于你的人格底座和这个场景，我召唤了这几个版本的你：
+**主持人负责**：
+1. 加载 decision-card（`tools/persona_runtime_loader.py`）
+2. 分析场景张力轴（内部，不展示给用户）
+3. 调用 `prompts/variant_generator.md` 生成结构化变体参数
+4. 向用户展示变体阵容，等待确认
+5. **Phase 1**：并行 spawn 3-4 个变体 agent（各自只看自己的 variant-card，互相信息隔离）
+6. **Phase 2**：spawn 1 个质询 agent，接收所有 Phase 1 输出 + 用户 L4 盲区
+7. **Phase 3**：综合所有输出，按用户语言风格生成最终报告
 
-🔵 [变体名]：[一句话描述]
-🟢 [变体名]：[描述]
-🟡 [变体名]：[描述]
-🔴 [变体名]：[描述]
-
-它们都是你——就是你自己的不同面。
-```
-
-### Step 3: 渐进式讨论
-
-按照 `prompts/debate_engine.md` 执行三阶段：
-
-**Phase 1 → Phase 2 → Phase 3**
-
-每个阶段结束后暂停，允许用户追问任何一个替身。
+**三个 agent prompt**：
+- 变体 agent → `prompts/phase1_independent.md`
+- 质询 agent → `prompts/phase2_challenge.md`
+- 综合报告 → `prompts/phase3_synthesis.md`
 
 情绪感知层在整个过程中持续工作，如果用户情绪升温，按 `emotion_detector.md` 中断和调整。
 
