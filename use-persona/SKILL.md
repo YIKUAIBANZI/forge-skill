@@ -15,8 +15,8 @@ tools:
 ## 进入前
 
 1. 确认要调用哪个 persona（从命令参数或询问用户）
-2. 读取 `personas/others/{name}/persona.md`
-3. 完整解析五层结构，尤其是 L2 表达风格和 L4 互动模式
+2. 读取 `personas/others/{name}/persona.json`，通过 `tools/persona_runtime_loader.py` 生成 `chat-card`（精简版上下文）
+3. 如需向用户展示完整档案，读取 `persona.md`（仅供人阅读，不作为程序数据源）
 4. 进入角色前，内部确认：
 
 ```

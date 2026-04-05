@@ -8,6 +8,7 @@ tools:
   - Glob
   - Bash
   - AskUserQuestion
+  - Agent
 ---
 
 # /use-self — 替身决策会议
@@ -27,7 +28,8 @@ tools:
 ### Step 0: 加载人格底座
 1. 读取 `personas/self/` 目录，检查是否有已创建的替身
 2. 如无替身，提示用户先运行 `/forge-self`
-3. 加载 `persona.md`，解析五层结构
+3. 加载 `persona.json`（single source of truth）
+4. 通过 `tools/persona_runtime_loader.py` 生成 `decision-card`（精简版上下文）
 
 ### Step 0.5: 情绪感知（优先）
 **在做任何分析前**，按照 `prompts/emotion_detector.md` 检测用户情绪状态：

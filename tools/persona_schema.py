@@ -29,7 +29,7 @@ class Trait:
 
 @dataclass
 class PersonaMeta:
-    name: str
+    name: str = ""
     type: str = "self"          # self | persona
     version: str = "v1.0"
     created: str = ""

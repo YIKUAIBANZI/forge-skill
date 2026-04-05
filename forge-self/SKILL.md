@@ -60,6 +60,16 @@ tools:
 3. 按照 `prompts/correction_handler.md` 处理用户纠正
 4. 迭代修正直到用户确认"这像我"
 
+### Phase 4.5: 自动校验
+生成 persona.json 后，运行 `tools/persona_validator.py` 校验：
+- 结构完整性（L0-L5 全部存在）
+- 参数合法性（L3 scores 在 1-10）
+- 证据覆盖率（> 80% 的 trait 有 evidence）
+- 矛盾检测
+
+如有 error 级问题，自动修正后重新生成。
+如有 warning 级问题，展示给用户确认。
+
 ### Phase 5: 存档
 1. 用 `tools/version_manager.py` 创建版本快照
 2. 告知用户：替身已创建，可以使用 `/use-self` 进行决策辅助

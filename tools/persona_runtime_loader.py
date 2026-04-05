@@ -275,7 +275,7 @@ def _build_variant_card(
         sections.append(scene_summary)
 
     sections.append("")
-    sections.append("**以第一人称"我"说话，用上面的语言风格和口头禅。**")
+    sections.append('**以第一人称"我"说话，用上面的语言风格和口头禅。**')
 
     return "\n".join(sections)
 

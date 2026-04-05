@@ -83,6 +83,16 @@ tools:
 3. 按照 `prompts/correction_handler.md` 处理纠正
 4. 可以做一段模拟对话让用户感受效果
 
+### Phase 4.5: 自动校验
+生成 persona.json 后，运行 `tools/persona_validator.py` 校验：
+- 结构完整性（L0-L5 全部存在）
+- L2 表达风格覆盖率（fixed_phrases 必须有 evidence）
+- L4 场景反应覆盖率（> 4 个场景有描述）
+- 矛盾检测
+
+如有 error 级问题，自动修正后重新生成。
+如有 warning 级问题，展示给用户确认。
+
 ### Phase 5: 存档
 1. 用 `tools/version_manager.py` 创建快照
 2. 告知用户：可以使用 `/use-persona [name]` 和 ta 对话
