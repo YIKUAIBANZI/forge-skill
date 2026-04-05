@@ -60,20 +60,40 @@
   要加进去吗？
 ```
 
-### Step 5: 应用合并
+### Step 5: 应用合并 + 生成 diff
+
+```python
+from tools.version_manager import archive_before_update, generate_diff, save_changelog_entry
+
+# 存档当前版本
+archive_before_update(name, persona_type)
+
+# 将用户确认的更新写入 persona.json
+# old_data = 更新前的数据，new_data = 更新后的数据
+# ...
+
+# 生成字段级 diff 并写入 changelog
+changes = generate_diff(old_data, new_data)
+if changes:
+    save_changelog_entry(
+        name=name,
+        persona_type=persona_type,
+        changes=changes,
+        reason="增量合并：" + source_description,  # 如"新增微信聊天记录"
+        user_words="",
+    )
+
+# 更新 meta.last_updated 和 meta.version
 ```
-根据用户确认结果更新 persona.md
-在L5纠正层记录本次更新
-更新元信息中的 last_updated 和 version
+
+向用户展示变更摘要：
 ```
+合并完成。
 
-## 变化追踪
+本次更新了 {N} 个字段：
+- L3.risk_appetite.score: 4 → 6（来源：新导入的微信记录）
+- L2.signature_phrases: 新增"就这样"
+- ...
 
-在 `persona.md` 末尾维护变更日志：
-
-```markdown
-## 变更日志
-- [v1.0] [日期] 初始创建，数据来源：对话采集
-- [v1.1] [日期] 增量更新，新增微信聊天记录分析，更新了风险偏好参数（4→6）
-- [v1.2] [日期] 用户纠正：...
+变更已记录到 history/changelog.json，可随时查看或按字段回滚。
 ```

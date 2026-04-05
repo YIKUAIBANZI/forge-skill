@@ -41,13 +41,58 @@
 
 ## 纠正记录格式
 
-写入 L5 纠正层：
+### 1. 写入 persona.json 的 L5 纠正层
 
-```markdown
-- [日期] 用户纠正
-  - 触发场景：[用户说了什么]
-  - 原始推断：[之前的结论] (来源：[对话/素材])
-  - 用户意见：[用户的解释]
-  - 处理方式：[修改/保留并标注/增加场景区分]
-  - 更新内容：[具体改了什么]
+```json
+{
+  "date": "YYYY-MM-DD",
+  "layer": "L0|L1|L2|L3|L4",
+  "field": "具体字段名",
+  "before": "修改前的值",
+  "after": "修改后的值",
+  "reason": "用户反馈 / 新素材 / 手动纠正",
+  "user_original_words": "用户说的原话"
+}
+```
+
+### 2. 写入 changelog.json（通过 version_manager.py）
+
+每次纠正完成后，调用：
+
+```python
+from tools.version_manager import archive_before_update, generate_diff, save_changelog_entry
+
+# 先存档
+archive_before_update(name, persona_type)
+
+# 应用修改，得到 old_data 和 new_data
+# ...
+
+# 生成 diff 并写入 changelog
+changes = generate_diff(old_data, new_data)
+save_changelog_entry(
+    name=name,
+    persona_type=persona_type,
+    changes=changes,
+    reason="用户纠正",
+    user_words=user_original_words,
+)
+```
+
+changelog.json 中每条记录格式：
+```json
+{
+  "version": "1.0 → 1.1",
+  "date": "ISO date",
+  "reason": "用户纠正",
+  "user_words": "其实我骨子里还是挺冒险的",
+  "changes": [
+    {
+      "field_path": "L3_decision_params.parameters.risk_appetite.score",
+      "before": 4,
+      "after": 6,
+      "change_type": "modified"
+    }
+  ]
+}
 ```
