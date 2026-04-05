@@ -173,3 +173,27 @@ data_sources: [对话采集 / 微信聊天记录 / 日记 / 社交媒体]
 confidence_overall: [高/中/低]
 ---
 ```
+
+## 同步输出 persona.json（必须）
+
+生成 `persona.md` 后，**必须同时生成对应的 `persona.json`**。
+
+格式严格遵循 `docs/persona_schema.md` 中的 Self Persona 结构。
+
+**trait 的证据规则**（每个特征条目必须有）：
+```json
+{
+  "trait": "特征描述",
+  "evidence": "用户原话或具体行为描述（不是 AI 的概括）",
+  "source": "conversation | wechat | diary | social | correction",
+  "confidence": "high | medium | low"
+}
+```
+
+- `high`：多个来源交叉验证，或用户明确自述
+- `medium`：单一来源但证据明确
+- `low`：推断性，缺乏直接证据（标注但保留，不删除）
+
+**证据覆盖目标**：> 80% 的 trait 有 evidence。无法填写 evidence 的标 `confidence: low`，不编造。
+
+调用 `tools/skill_writer.py` 的 `write_persona_json()` 写入，调用 `tools/persona_validator.py` 做校验，校验通过后告知用户。

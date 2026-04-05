@@ -164,3 +164,27 @@ type: persona  # 区别于 self 类型
 3. **保留原话**：能用 ta 的原话当例子的，直接引用
 4. **标注数据来源**：每个特征标注是从聊天记录/社媒/用户描述中提取
 5. **标注置信度**：高（多次出现）/ 中（出现过）/ 低（推断）
+
+## 同步输出 persona.json（必须）
+
+生成 `persona.md` 后，**必须同时生成对应的 `persona.json`**。
+
+格式严格遵循 `docs/persona_schema.md` 中的 Others Persona 结构。
+
+**L2 特别要求**：`signature_phrases` 和 `fixed_phrases` 必须是 ta 的原话，不是概括。`evidence` 字段引用聊天记录中的具体片段。
+
+**trait 证据规则**：
+```json
+{
+  "trait": "特征描述",
+  "evidence": "原始聊天记录片段或用户描述的具体场景",
+  "source": "wechat | social | conversation",
+  "confidence": "high | medium | low"
+}
+```
+
+采集时追问原话示例（`intake.md` 已有指引，这里重申）：
+- "能给我一句 ta 的原话吗？"
+- "ta 回复这种情况时，一般怎么说？"
+
+调用 `tools/skill_writer.py` 的 `write_persona_json()` 写入，调用 `tools/persona_validator.py` 校验。
