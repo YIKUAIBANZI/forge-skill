@@ -7,17 +7,36 @@
 
 import json
 from pathlib import Path
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import Optional
+
+
+@dataclass
+class TraitEvidence:
+    """单条特征的证据结构"""
+    trait: str                  # 特征描述
+    evidence: str               # 原话或行为实例（不是 AI 概括）
+    source: str                 # conversation | wechat | diary | social
+    confidence: str             # high | medium | low
+    cross_sources: list = field(default_factory=list)  # 其他验证来源
+
+    def to_dict(self):
+        return {
+            "trait": self.trait,
+            "evidence": self.evidence,
+            "source": self.source,
+            "confidence": self.confidence,
+            "cross_sources": self.cross_sources,
+        }
 
 
 @dataclass
 class CrossValidationResult:
     """交叉验证结果"""
-    high_confidence: list = field(default_factory=list)    # 多源一致的特征
-    medium_confidence: list = field(default_factory=list)  # 部分来源的特征
-    contradictions: list = field(default_factory=list)     # 不同来源的矛盾点
-    new_findings: list = field(default_factory=list)       # 仅在素材中发现、对话未提到
+    high_confidence: list = field(default_factory=list)    # TraitEvidence 列表（多源一致）
+    medium_confidence: list = field(default_factory=list)  # TraitEvidence 列表（部分来源）
+    contradictions: list = field(default_factory=list)     # 不同来源的矛盾点（dict 含两侧证据）
+    new_findings: list = field(default_factory=list)       # 仅在素材中发现、对话未提到（TraitEvidence）
 
 
 class JournalAnalyzer:
@@ -78,7 +97,21 @@ class JournalAnalyzer:
         self._analyze_self_perception(cv, personality_signals)
 
         return {
-            "cross_validation": asdict(cv),
+            "cross_validation": {
+                "high_confidence": [
+                    t.to_dict() if isinstance(t, TraitEvidence) else {"trait": t, "evidence": "", "source": "unknown", "confidence": "low"}
+                    for t in cv.high_confidence
+                ],
+                "medium_confidence": [
+                    t.to_dict() if isinstance(t, TraitEvidence) else {"trait": t, "evidence": "", "source": "unknown", "confidence": "medium"}
+                    for t in cv.medium_confidence
+                ],
+                "contradictions": cv.contradictions,
+                "new_findings": [
+                    t.to_dict() if isinstance(t, TraitEvidence) else {"trait": t, "evidence": "", "source": "unknown", "confidence": "low"}
+                    for t in cv.new_findings
+                ],
+            },
             "personality_signals": personality_signals,
             "data_sources_used": self._list_sources(),
             "analysis_confidence": self._calculate_confidence(),
@@ -131,9 +164,13 @@ class JournalAnalyzer:
                 if self.social_data:
                     social_style = self.social_data.get("signals", {}).get("presentation_style", "")
                     if social_style and social_style != narrative:
-                        cv.new_findings.append(
-                            f"公私表达差距：社交媒体上是「{social_style}」，私下日记里是「{narrative}」"
-                        )
+                        cv.new_findings.append(TraitEvidence(
+                            trait="公私表达差距",
+                            evidence=f"社交媒体上是「{social_style}」，私下日记里是「{narrative}」",
+                            source="diary",
+                            confidence="medium",
+                            cross_sources=["social_media"],
+                        ))
 
         signals["expression_style"] = style_data
 
@@ -193,9 +230,25 @@ class JournalAnalyzer:
                     agreed = [v for v in inferred if any(cv_val in v or v in cv_val for cv_val in conv_values)]
                     disagreed = [v for v in inferred if v not in agreed]
                     if agreed:
-                        cv.high_confidence.extend([f"价值观-{v}（自述+社媒一致）" for v in agreed])
+                        cv.high_confidence.extend([
+                            TraitEvidence(
+                                trait=f"价值观-{v}",
+                                evidence=f"用户自述「{v}」，社交媒体内容同样体现此倾向",
+                                source="conversation",
+                                confidence="high",
+                                cross_sources=["social_media"],
+                            ) for v in agreed
+                        ])
                     if disagreed:
-                        cv.new_findings.extend([f"价值观发现：社交媒体显示「{v}」，但用户未在对话中提及" for v in disagreed])
+                        cv.new_findings.extend([
+                            TraitEvidence(
+                                trait=f"价值观发现-{v}",
+                                evidence=f"社交媒体显示「{v}」，但用户未在对话中提及",
+                                source="social_media",
+                                confidence="medium",
+                                cross_sources=[],
+                            ) for v in disagreed
+                        ])
 
         # 日记中的价值主题
         if self.diary_data:
@@ -246,9 +299,18 @@ class JournalAnalyzer:
                 if self.social_data:
                     public_tone = self.social_data.get("signals", {}).get("emotional_tone", "")
                     if "积极" in public_tone and "苛责" in self_eval:
-                        cv.contradictions.append(
-                            "情绪表达矛盾：社交媒体呈现积极，但私下日记中对自己有较多苛责"
-                        )
+                        cv.contradictions.append({
+                            "trait": "情绪表达矛盾",
+                            "side_a": {
+                                "evidence": f"社交媒体呈现积极情绪（{public_tone}）",
+                                "source": "social_media",
+                            },
+                            "side_b": {
+                                "evidence": f"私下日记中对自己有较多苛责（{self_eval}）",
+                                "source": "diary",
+                            },
+                            "confidence": "medium",
+                        })
 
         signals["emotional_patterns"] = emotion_data
 
@@ -276,9 +338,13 @@ class JournalAnalyzer:
             if conv_strengths and diary_themes:
                 gaps = [t for t in diary_themes if not any(s in t for s in conv_strengths)]
                 if gaps:
-                    cv.new_findings.append(
-                        f"日记中频繁出现但对话中未提及的关切：{', '.join(gaps[:3])}"
-                    )
+                    cv.new_findings.append(TraitEvidence(
+                        trait="自我认知盲区",
+                        evidence=f"日记中频繁出现但对话中未提及的关切：{', '.join(gaps[:3])}",
+                        source="diary",
+                        confidence="medium",
+                        cross_sources=["conversation"],
+                    ))
 
         signals["self_perception"] = self_data
 
@@ -309,21 +375,34 @@ class JournalAnalyzer:
         parts.append("【高置信度特征】")
         if cv.high_confidence:
             for item in cv.high_confidence:
-                parts.append(f"  - {item}")
+                if isinstance(item, TraitEvidence):
+                    parts.append(f"  - {item.trait}（{item.confidence}置信度）")
+                    parts.append(f"    evidence: {item.evidence}")
+                    parts.append(f"    source: {item.source}" + (f" + {', '.join(item.cross_sources)}" if item.cross_sources else ""))
+                else:
+                    parts.append(f"  - {item}")
         else:
             parts.append("  （无多源验证的高置信特征，建议导入更多素材）")
 
         parts.append("\n【数据矛盾点（需用户确认）】")
         if cv.contradictions:
             for item in cv.contradictions:
-                parts.append(f"  ⚠️ {item}")
+                if isinstance(item, dict) and "side_a" in item:
+                    parts.append(f"  ⚠️ {item.get('trait', '矛盾')}")
+                    parts.append(f"     A面：{item['side_a']['evidence']}（来源：{item['side_a']['source']}）")
+                    parts.append(f"     B面：{item['side_b']['evidence']}（来源：{item['side_b']['source']}）")
+                else:
+                    parts.append(f"  ⚠️ {item}")
         else:
             parts.append("  （未发现显著矛盾）")
 
         parts.append("\n【新发现（对话未提及，但从素材中发现）】")
         if cv.new_findings:
             for item in cv.new_findings:
-                parts.append(f"  🔍 {item}")
+                if isinstance(item, TraitEvidence):
+                    parts.append(f"  🔍 {item.trait}：{item.evidence}（来源：{item.source}，置信度：{item.confidence}）")
+                else:
+                    parts.append(f"  🔍 {item}")
 
         parts.append(f"\n【分析置信度】{self._calculate_confidence()}")
         parts.append(f"【数据来源】{', '.join(self._list_sources())}")
