@@ -69,18 +69,25 @@ Phase 3：综合报告
 
 ## 安装
 
+### 全局安装（所有项目都能用）
+
 ```bash
-git clone https://github.com/YIKUAIBANZI/forge-skill.git
-cd forge-skill
+git clone https://github.com/YIKUAIBANZI/forge-skill.git ~/.claude/skills/forge-skill
+```
 
-# 可选：素材解析功能（微信/社交媒体/日记）
-pip install -r requirements.txt
+### 项目级安装（仅当前项目可用，在 git 仓库根目录执行）
 
-# 注册 Skill
-claude skill add ./forge-self
-claude skill add ./forge-persona
-claude skill add ./use-self
-claude skill add ./use-persona
+```bash
+mkdir -p .claude/skills
+git clone https://github.com/YIKUAIBANZI/forge-skill.git .claude/skills/forge-skill
+```
+
+安装完成后重启 Claude Code，4 个 skill 自动加载，无需其他配置。
+
+可选：安装素材解析依赖（微信 / 社交媒体 / 日记解析）
+
+```bash
+pip install -r ~/.claude/skills/forge-skill/requirements.txt
 ```
 
 ## 使用
