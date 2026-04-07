@@ -1,69 +1,234 @@
 # Forge Skill
 
-> 锻造人格的工具。蒸馏自己，也蒸馏身边的人。
+> 蒸馏自己，看清自己。
+> 蒸馏亲友，留住他们的余温与回声
+> 让 AI 不再是冰冷的吐字机器。
+
+
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Claude Code](https://img.shields.io/badge/Claude_Code-Skill-purple.svg)
+![forge-self](https://img.shields.io/badge/forge--self-蒸馏自己-blue.svg)
+![forge-persona](https://img.shields.io/badge/forge--persona-蒸馏他人-orange.svg)
+![Privacy](https://img.shields.io/badge/数据-本地处理-green.svg)
+
+Forge 是一个 **local-first 的 Claude Code 人格引擎**。  
+它做两件事：
+
+- **forge-self**：蒸馏你自己的说话方式、决策模式和盲区，生成一个能帮你重新看清自己的数字替身。
+- **forge-persona**：从聊天记录、记忆和描述中蒸馏他人的语气、习惯和互动方式，让 ta 的腔调被近似保留下来。
+
+所有数据都保留在本地，不依赖服务器。
+
+> ⚠️ 本项目仅用于个人记忆与情感疗愈。严禁用于骚扰、跟踪或侵犯他人隐私。
 
 ---
 
-## 两种模式
+## 为什么做 Forge
 
-### `/forge-self` — 蒸馏自己
+> “师傅，这样怎么做我还是没有学会。”  
+> “宝贝，我陪你一辈子。”  
+> “妈妈，我已经可以独当一面了。”
 
-当你看不清自己时，用数字替身帮你重新看清。
+有些话，来不及说完。  
+有些人，不在了。
 
-通过多轮对话和素材导入，提取你的五层人格底座。在关键决策时，召唤多个「参数不同的你」真正并行思考，互相质询，帮你看清局中看不清的东西。
+我们不会对一块土有感情，也不会对一块电子屏幕有感情。  
+但屏幕那一边，可能有我们爱过的人、依赖过的人、想念的人。
 
-**使用出口**：`/use-self`（替身决策会议）
+Forge 做的不是复活谁，也不是替代谁。  
+它只是试着用聊天记录、说话习惯、互动痕迹，拼出一个大概。  
+起码，留住 ta 说话的腔调。
 
----
+还有另一种孤独：你看不清自己。
 
-### `/forge-persona [name]` — 蒸馏他人
+很多时候，我们不是缺一个“最佳答案”。  
+我们知道什么更健康，什么更长期正确，什么更值得坚持。  
+但知道，不等于做得到。
 
-把一个你身边的人——朋友、家人、前任、已离开的人——以 ta 的方式留下来。
+所以人更常缺的，不是建议，  
+而是一个能把自己照出来的镜子。
 
-用 ta 的聊天记录、社交媒体内容、你的描述，还原 ta 说话的方式、互动的习惯、和你之间的默契。
-
-**使用出口**：`/use-persona [name]`（以 ta 的身份和你对话）
-
----
-
-## 核心设计
-
-### 替身会议是怎么跑的
-
-不是一个 Claude 扮演多个角色，而是真正的多 Agent 架构：
-
-```
-主持人分析场景张力轴，生成 3-4 个变体参数
-          ↓
-Phase 1：并行 spawn 多个变体 Agent（互相信息隔离）
-          ↓
-Phase 2：spawn 质询 Agent，接收所有 Phase 1 输出
-         找出每个变体的隐含假设、矛盾、盲区
-          ↓
-Phase 3：综合报告
-         ├─ 立场分布
-         ├─ 共识区
-         ├─ 核心分歧
-         ├─ 代价清单（选A意味着...，选B意味着...）
-         └─ 做决定前需要搞清楚的几件事
-```
-
-变体不是固定的「保守/激进」，而是根据**这个场景的核心矛盾轴**动态生成。不给最优解，只给清晰度。
+Forge 就是这个镜子。  
+一个锻造人格的工具。蒸馏自己，也蒸馏身边的人。
 
 ---
 
-### 人格档案层级设计
+## Forge 能做什么
 
-| 层级 | forge-self | forge-persona |
-|------|-----------|---------------|
-| L0 | 硬性覆写（底线和原则） | 硬性特征（最稳定的行为） |
-| L1 | 身份认同 | 身份背景 + 关系信息 |
-| L2 | 表达风格 | **表达风格（核心层，必须有原话证据）** |
-| L3 | **决策模式（8 维参数化，1-10 分）** | 思维风格 |
-| L4 | **价值观与盲区** | **互动模式（关系专属层）** |
-| L5 | 纠正层（用户修正记录） | 纠正层 |
+### 1. forge-self —— 蒸馏自己
 
-每个特征必须带 `evidence`、`source`、`confidence` 三个字段——没有证据的特征标注置信度，不编造。
+从这些材料中提取你的“人格底座”：
+
+- 引导式对话
+- 日记 / 笔记
+- 聊天记录
+- 社交媒体内容
+
+然后把这些人格信息用于：
+
+- 自我反思
+- 决策辅助
+- 多变体替身会议
+- 盲区暴露与代价分析
+
+适合这样的场景：
+
+- “我明明知道什么是对的，但还是做不出决定。”
+- “我想知道自己为什么总会在某类问题上卡住。”
+- “我不想听建议，我想更清楚地看见自己。”
+
+---
+
+### 2. forge-persona —— 蒸馏他人
+
+从这些材料中提取 ta 的人格轮廓：
+
+- 微信聊天记录
+- 文本导出
+- 社交媒体内容
+- 你对 ta 的描述和记忆
+
+然后近似还原：
+
+- ta 的说话风格
+- ta 的口头禅和语气
+- ta 和你互动的方式
+- ta 的边界和典型回应模式
+
+适合这样的场景：
+
+- 留住老朋友的腔调
+- 保留导师 / 同事 / 前任 boss 的沟通方式
+- 记住一个离开的人曾经怎样回应你
+- 让 agent 在角色扮演时更像“这个人”而不是泛泛的模仿
+
+---
+
+### 3. use-self —— 替身会议
+
+Forge 不只是让你“拥有一个更像自己的 AI”。  
+它还会在一个具体决策场景中，生成多个参数不同的你：
+
+- 更稳健的你
+- 更果断的你
+- 更看长期的你
+- 更重关系的你
+
+它们不会替你做决定。  
+它们会把：
+
+- 你的真实在意点
+- 每个选择的代价
+- 你忽略的盲区
+- 你自我矛盾的地方
+
+一起摊开来看。
+
+你得到的不是“最优解”，而是 **清晰度**。
+
+---
+
+### 4. use-persona —— 以 ta 的方式和你说话
+
+载入蒸馏好的人格档案后，Forge 可以让 Claude：
+
+- 用 ta 的消息长度回你
+- 用 ta 的口头禅说话
+- 按 ta 的互动习惯回应你
+- 保留 ta 的边界和禁区
+
+这不是复活，也不是替代。  
+而是一种近似的、带着记忆痕迹的重现。
+
+---
+
+## 核心理念
+
+不管你蒸馏的是：
+
+- 朋友
+- 前任 boss
+- 导师
+- 同事
+- 爱人
+- 还是你自己
+
+本质上都在做同一件事：
+
+**怎么把“人格”变成 agent 真正能调用的东西。**
+
+Forge 是我对这个问题的回答。
+
+---
+
+## 它是怎么工作的
+
+Forge 把“人格构建”和“人格使用”拆成了两件事。
+
+### Step 1：Forge 阶段
+收集并提炼这些信号：
+
+- 对话
+- 聊天记录
+- 日记
+- 社交媒体
+- 用户纠正反馈
+
+然后把它们整理成结构化的人格档案。
+
+### Step 2：Use 阶段
+这些人格档案随后可以被用于两种方向：
+
+- **use-self**：作为决策镜子
+- **use-persona**：作为记忆驱动的角色对话
+
+### Step 3：本地优先
+所有解析和人格生成都在本地完成。  
+你的聊天记录和记忆不需要离开你的机器。
+
+---
+
+## 为什么 forge-self 有意义
+
+我们从来不是差那个“最佳答案”。
+
+你知道高油高盐不健康，但偶尔吃一次真的开心。  
+你知道坚持锻炼很好，但偷懒一次也确实舒服。  
+你知道长期正确的事情重要，但未必每次都做得到。
+
+所以 forge-self 不是替你做决定。  
+它做的是：把你的说话方式、思考方式、决策模式提炼出来，  
+变成几个参数不同的你，帮你从第三视角重新看自己。
+
+不是为了自恋。  
+是为了在局中时，仍然有一面镜子。
+
+---
+
+## 为什么 forge-persona 有意义
+
+有些人不会一直在。
+
+朋友会走远，同事会离开，爱的人可能有一天不在了。  
+记忆会模糊，但 ta 说话的腔调、回应你的方式、你们之间那些固定的小梗，不该那么快消失。
+
+forge-persona 不是复活，不是替代，也不是欺骗。  
+它只是试着用 ta 留下的痕迹，拼出一个大概。
+
+至少，留住 ta 的腔调。
+
+---
+
+## 特性
+
+- 本地人格蒸馏（local-first persona distillation）
+- 微信聊天记录解析
+- 自我反思与决策辅助
+- 记忆驱动的角色扮演
+- 多 Agent / 多变体辩论式 use-self
+- 结构化人格档案
+- 纠正层与迭代修正
+- 无需服务器
 
 ---
 
@@ -90,99 +255,45 @@ git clone https://github.com/YIKUAIBANZI/forge-skill.git .claude/skills/forge-sk
 pip install -r ~/.claude/skills/forge-skill/requirements.txt
 ```
 
-## 使用
+---
 
-```
-/forge-self              # 开始蒸馏自己（多轮对话采集 + 素材导入）
-/forge-persona 小明      # 开始蒸馏"小明"
+## 可用命令
+
+```bash
+/forge-self              # 蒸馏自己
+/forge-persona 小明      # 蒸馏"小明"
 /use-self                # 召唤替身决策会议
-/use-persona 小明        # 以小明的身份和你对话
-
-/eval-consistency        # 测试角色扮演一致性（自动评分）
-/eval-debate             # 测试替身会议辩论质量（自动评分）
-```
-
----
-
-## 数据来源支持
-
-| 素材 | 格式 | 工具 |
-|------|------|------|
-| 微信聊天记录 | txt / html（多格式自动检测） | `tools/wechat_parser.py` |
-| 社交媒体内容 | json / txt | `tools/social_parser.py` |
-| 日记/笔记 | md / txt / json | `tools/diary_parser.py` |
-| 跨源综合分析 | — | `tools/journal_analyzer.py` |
-
-解析失败时会生成 LLM 解析 prompt，可直接交给 Claude 处理非标准格式。
-
----
-
-## 目录结构
-
-```
-forge-skill/
-├── forge-self/               # /forge-self Skill（蒸馏自己）
-│   ├── SKILL.md
-│   └── prompts/
-├── forge-persona/            # /forge-persona Skill（蒸馏他人）
-│   ├── SKILL.md
-│   └── prompts/
-├── use-self/                 # /use-self Skill（替身决策会议）
-│   ├── SKILL.md
-│   └── prompts/
-│       ├── moderator.md          # 主持人（多 Agent 协调）
-│       ├── variant_generator.md  # 变体参数生成（输出结构化 JSON）
-│       ├── phase1_independent.md # 变体 Agent（信息隔离）
-│       ├── phase2_challenge.md   # 质询 Agent
-│       ├── phase3_synthesis.md   # 综合报告
-│       ├── template_loader.md    # 场景模板加载
-│       └── follow_up.md          # 决策追踪与回访
-├── use-persona/              # /use-persona Skill（角色扮演对话）
-│   ├── SKILL.md
-│   └── prompts/
-│       └── chat_engine.md        # 含每轮轻量 check + 每 5 轮深度校准
-├── tools/
-│   ├── persona_schema.py         # 人格数据结构定义
-│   ├── persona_validator.py      # 校验器（结构/证据/矛盾检测）
-│   ├── persona_runtime_loader.py # 运行时卡片生成（chat/decision/variant-card）
-│   ├── skill_writer.py           # persona 读写
-│   ├── version_manager.py        # 版本管理（字段级 diff + 按字段回滚）
-│   ├── wechat_parser.py          # 微信记录解析
-│   ├── social_parser.py          # 社交媒体解析
-│   ├── diary_parser.py           # 日记解析
-│   └── journal_analyzer.py       # 跨源综合分析
-├── templates/                # 场景快启模板（含结构化张力轴 + 变体参数偏移）
-│   ├── job_change.md
-│   ├── relationship.md
-│   ├── investment.md
-│   └── life_change.md
-├── evals/                    # 评测框架（无需 API Key）
-│   ├── eval-consistency/     # /eval-consistency Skill
-│   └── eval-debate/          # /eval-debate Skill
-├── docs/
-│   ├── persona_schema.md     # 人格数据结构文档（供各 Skill 共用）
-│   └── OPTIMIZATION_TASKS.md
-├── personas/                 # 生成的人格档案（本地，gitignored）
-│   ├── self/
-│   └── others/
-└── requirements.txt
+/use-persona 小明        # 以小明的方式和你对话
 ```
 
 ---
 
 ## 隐私
 
-- 所有数据本地处理，不上传任何服务器
-- `personas/` 目录已 gitignored，不会意外提交
-- 解析工具只提取人格信号，不存储原始聊天内容
-- `decisions.json` 决策记录同样 gitignored
+- 所有数据本地处理
+- 人格档案本地存储
+- 不依赖远程服务器
+- 原始聊天记录和记忆不会离开你的机器
 
 ---
 
-## 致谢
+## 搜索关键词
 
-设计灵感来自 [ex-skill](https://github.com/therealXiaomanChu/ex-skill) 和 [colleague-skill](https://github.com/titanwings/colleague-skill)。
+人格蒸馏、数字替身、自我反思、决策辅助、聊天记录人格提取、微信聊天记录分析、Claude Code Skill、local-first AI、persona distillation、digital persona、self-reflection、decision support、roleplay agent、memory-based roleplay、multi-agent debate
 
 ---
 
-MIT License
+## 路线图
+
+- 更强的人格 schema
+- 更轻量的 runtime persona cards
+- 更好的评测体系
+- 更稳的 anti-drift
+- 更丰富的本地解析器
+- 更强的多 agent 调度
+
+---
+
+## License
+
+MIT
