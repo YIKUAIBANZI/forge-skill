@@ -145,7 +145,7 @@ def generate_params_feedback(persona_name: str) -> dict:
 
 
 def new_record_id() -> str:
-    return datetime.now().strftime("%Y%m%d%H%M%S")
+    return datetime.now().strftime("%Y%m%d%H%M%S%f")
 
 
 def _sanitize(name: str) -> str:

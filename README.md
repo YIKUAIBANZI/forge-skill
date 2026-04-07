@@ -268,36 +268,194 @@ pip install -r ~/.claude/skills/forge-skill/requirements.txt
 
 ---
 
-## 效果示例
+## 使用示例
 
-### forge-self — 替身决策
+### 示例 1：蒸馏自己（forge-self）
 
-**场景：五一去不去找对象**
+在 Claude Code 中输入 `/forge-self`，Forge 会启动四轮对话来采集你的人格信息：
+
 ```
-/use-self
+> /forge-self
 
-替身已加载。你现在状态怎么样？有什么在纠结的事，说说。
-越具体越好——不只是"要不要做某件事"，而是"有个情况是这样的……"
+Forge: 让我们开始蒸馏你的人格底座。先聊聊基本情况——
+      你现在做什么工作？处于人生的什么阶段？
+      如果用一句话介绍自己，你会怎么说？
 
-用户      ❯ 五一去不去找她
+You:  我是CS学生，20岁，还在摸索方向。一句话的话："什么都想试，什么都还没定。"
 
-替身       ❯ 五一去找她。
-             你最后悔的事是没做的事，不是做了的事。
-             你认定了一件事是对的，行动很快。
-             你现在已经认定了——不然不会纠结这么久。
-             你在等一个人告诉你"可以去了"。
+Forge: 你身边的人怎么评价你？跟你自己的感觉有差别吗？
 
-             可以去了。
+You:  朋友说我挺随和的，但我觉得自己其实很有主见，只是不太表达。
+
+     ... (4 轮对话，约 15-20 分钟)
+
+Forge: 你的人格底座已生成 ✅
+      保存在: personas/self/阿然/persona.md
+      核心发现:
+      - 决策风格: 直觉先行 (risk_appetite: 7/10)
+      - 价值排序: 自由 > 亲密 > 快乐 > 安全 > 成长
+      - 盲区: "懒" 不是全局的——在关系中你很主动
 ```
 
- ---
+你还可以导入聊天记录来交叉验证：
+
+```
+You:  我有一段微信聊天记录，帮我分析一下
+
+Forge: 好的，请把聊天记录文件发给我。支持 .txt 和 .html 格式。
+      （分析完成后会自动与对话数据交叉验证，标注置信度）
+```
+
+### 示例 2：蒸馏他人（forge-persona）
+
+```
+> /forge-persona 小美
+
+Forge: 我来帮你蒸馏"小美"的人格。先跟我聊聊——
+      小美是你的什么人？你们的关系大概是什么样的？
+
+You:  她是我女朋友。日常互动模式是她说了算，我执行。
+
+Forge: 她平时怎么说话？消息一般多长？爱用什么口头禅？
+
+You:  超级短，一般1-3个字一条，而且拆成很多条发。
+      口头禅有"行吧""对啊""不然留着过年吗"。
+      生气不会爆发，而是突然变冷——句号变多，"嗯"变多。
+
+     ... (收集说话风格、互动模式、关键场景)
+
+Forge: 小美的人格轮廓已生成 ✅
+      保存在: personas/others/小美/persona.md
+      关键特征:
+      - 消息风格: 极短拆条，冷淡时省句号
+      - 互动模式: 霸道女友 / 固定梗"试用期/转正/offer"
+      - 核心口头禅: 行吧、对啊、嗯哼、不然留着过年吗
+```
+
+### 示例 3：替身决策会议（use-self）
+
+```
+> /use-self
+
+Forge: 说说你在纠结什么吧。越具体越好。
+
+You:  收到一个外地的offer，薪资翻倍，但意味着要跟女朋友异地。
+
+Forge: 生成替身阵容:
+      🔵 稳健的你 — 安全优先，不冒不必要的险
+      🟢 成长的你 — 机会难得，该冲就冲
+      🟡 关系优先的你 — 亲密关系是底线
+      🔴 三年后的你 — 站在未来回头看
+
+      [Phase 1: 各替身独立分析...]
+      [Phase 2: 替身互相质询盲区...]
+      [Phase 3: 综合报告]
+
+      共识: 都认为需要跟女朋友认真谈一次
+      核心分歧: 是否值得用关系风险换职业跳板
+      你没注意到的: 你的 time_horizon 偏短期(3/10)，
+                    但这次决定本质上是长期的
+```
+
+### 示例 4：角色对话（use-persona）
+
+```
+> /use-persona 小美
+
+小美: 干嘛
+
+You:  今天加班好累
+
+小美: 行吧
+      那你吃了吗
+
+You:  还没
+
+小美: 不会吧
+      这都几点了
+      外卖点了没
+
+You:  你关心我啊
+
+小美: 关心个鬼
+      我怕你饿死了我没秘书用
+```
+
+---
+
+## 项目结构
+
+```
+forge-skill/
+├── forge-self/                # /forge-self 蒸馏自己
+│   ├── SKILL.md
+│   └── prompts/               # 四轮采集 + 人格构建 prompt
+├── forge-persona/             # /forge-persona 蒸馏他人
+│   ├── SKILL.md
+│   └── prompts/               # 素材优先采集 + 人格构建 prompt
+├── use-self/                  # /use-self 替身决策会议
+│   ├── SKILL.md
+│   └── prompts/               # 多 agent 辩论引擎
+├── use-persona/               # /use-persona 角色对话
+│   ├── SKILL.md
+│   └── prompts/               # 角色扮演引擎
+├── tools/                     # Python 工具
+│   ├── persona_schema.py      # 人格 JSON Schema 定义
+│   ├── persona_validator.py   # 人格档案校验器
+│   ├── persona_runtime_loader.py  # 运行时上下文卡片生成
+│   ├── skill_writer.py        # 人格文件读写
+│   ├── version_manager.py     # 版本存档与 diff
+│   ├── decision_logger.py     # 决策记录与追踪
+│   ├── wechat_parser.py       # 微信聊天记录解析
+│   ├── diary_parser.py        # 日记/笔记解析
+│   ├── social_parser.py       # 社交媒体解析
+│   └── journal_analyzer.py    # 多源交叉分析
+├── templates/                 # 决策场景快启模板
+├── personas/                  # 人格档案存储 (gitignored)
+├── tests/                     # 单元测试
+│   ├── test_persona_schema.py
+│   ├── test_persona_validator.py
+│   ├── test_runtime_loader.py
+│   ├── test_skill_writer.py
+│   ├── test_version_manager.py
+│   ├── test_decision_logger.py
+│   └── test_parsers.py
+├── evals/                     # 效果评测
+├── docs/                      # 文档
+│   ├── PRD.md
+│   └── persona_schema.md
+└── requirements.txt
+```
+
+---
+
+## 测试
+
+运行全部测试：
+
+```bash
+cd forge-skill
+pip install pytest
+pytest tests/ -v
+```
+
+测试覆盖：
+
+| 模块 | 测试文件 | 覆盖内容 |
+|------|----------|----------|
+| persona_schema | test_persona_schema.py | 实例化、序列化、反序列化、参数校验 |
+| persona_validator | test_persona_validator.py | 结构校验、参数范围、证据覆盖率、缺失字段检测 |
+| persona_runtime_loader | test_runtime_loader.py | chat/decision/variant 三种卡片生成、字段完整性 |
+| skill_writer | test_skill_writer.py | MD/JSON 读写、版本管理、纠正追加、名称清洗 |
+| version_manager | test_version_manager.py | diff 生成、快照存档、版本列表 |
+| decision_logger | test_decision_logger.py | 决策记录、结果回填、列表查询 |
+| parsers | test_parsers.py | 模块导入、数据结构、基本解析 |
+
+---
 
 ## 隐私
 
-- 所有数据本地处理
-- 人格档案本地存储
-- 不依赖远程服务器
-- 原始聊天记录和记忆不会离开你的机器
+所有数据本地处理，人格档案本地存储（`personas/` 已 gitignore），不依赖远程服务器。原始聊天记录和记忆不会离开你的机器。素材解析器只提取人格信号（说话风格、情绪模式、决策习惯），不存储原始内容。
 
 ---
 
@@ -309,12 +467,15 @@ pip install -r ~/.claude/skills/forge-skill/requirements.txt
 
 ## 路线图
 
+- 更丰富的数据源支持（QQ、钉钉、飞书、Telegram）
+- 更强的多 agent 辩论调度
+- 角色扮演 anti-drift 强化
+- 决策追踪闭环与参数反哺
 - 怀念故人应用（基于 forge-persona 的情感向产品）
-- 支持更多聊天记录格式（QQ、Telegram）
 - 更稳定的人格一致性，让替身更像"ta"
 - 更轻量的启动方式，降低上手门槛
 - 替身决策会议的可视化报告
-- 更强的多 agent 调度
+- Web UI（让不会 CLI 的人也能用）
 
 ---
 
