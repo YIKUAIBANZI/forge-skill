@@ -285,11 +285,11 @@ pip install -r ~/.claude/skills/forge-skill/requirements.txt
 
 ## 路线图
 
-- 更强的人格 schema
-- 更轻量的 runtime persona cards
-- 更好的评测体系
-- 更稳的 anti-drift
-- 更丰富的本地解析器
+- 怀念故人应用（基于 forge-persona 的情感向产品）
+- 支持更多聊天记录格式（QQ、Telegram）
+- 更稳定的人格一致性，让替身更像"ta"
+- 更轻量的启动方式，降低上手门槛
+- 替身决策会议的可视化报告
 - 更强的多 agent 调度
 
 ---
