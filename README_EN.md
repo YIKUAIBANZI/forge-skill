@@ -288,11 +288,11 @@ persona distillation, digital persona, digital stand-in, self-reflection, decisi
 
 ## Roadmap
 
-- stronger persona schema
-- lighter runtime persona cards
-- better evaluation harness
-- more robust anti-drift
-- richer local parsers
+- Memorial app — an emotional product built on forge-persona
+- Support for more chat formats (QQ, Telegram)
+- Stronger persona consistency — make the stand-in feel more like *them*
+- Lighter setup experience, lower barrier to entry
+- Visual reports for use-self decision meetings
 - stronger multi-agent orchestration
 
 ---
