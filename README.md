@@ -268,6 +268,30 @@ pip install -r ~/.claude/skills/forge-skill/requirements.txt
 
 ---
 
+## 效果示例
+
+### forge-self — 替身决策
+
+**场景：五一去不去找对象**
+```
+/use-self
+
+替身已加载。你现在状态怎么样？有什么在纠结的事，说说。
+越具体越好——不只是"要不要做某件事"，而是"有个情况是这样的……"
+
+用户      ❯ 五一去不去找她
+
+替身       ❯ 五一去找她。
+             你最后悔的事是没做的事，不是做了的事。
+             你认定了一件事是对的，行动很快。
+             你现在已经认定了——不然不会纠结这么久。
+             你在等一个人告诉你"可以去了"。
+
+             可以去了。
+```
+
+ ---
+
 ## 隐私
 
 - 所有数据本地处理
@@ -291,6 +315,12 @@ pip install -r ~/.claude/skills/forge-skill/requirements.txt
 - 更轻量的启动方式，降低上手门槛
 - 替身决策会议的可视化报告
 - 更强的多 agent 调度
+
+---
+
+## 致谢
+
+设计灵感来自 [ex-skill](https://github.com/therealXiaomanChu/ex-skill) 和 [colleague-skill](https://github.com/titanwings/colleague-skill)。
 
 ---
 
