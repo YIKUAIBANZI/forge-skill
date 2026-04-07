@@ -299,7 +299,7 @@ persona distillation, digital persona, digital stand-in, self-reflection, decisi
 
 ## 致谢
 
-设计灵感来自 [ex-skill](https://github.com/therealXiaomanChu/ex-skill) 和 [colleague-skill](https://github.com/titanwings/colleague-skill)。
+Design inspiration from [ex-skill](https://github.com/therealXiaomanChu/ex-skill) and [colleague-skill](https://github.com/titanwings/colleague-skill)。
 
 ---
 
