@@ -1,9 +1,10 @@
 # Forge Skill
 
-> Distill yourself. Find clarity.
-> Distill those you love. Keep their warmth. Keep their echo.
+> Distill yourself. Find clarity.  
+> Distill those you love. Keep their warmth. Keep their echo.  
 > Make AI less of a cold word machine.
 
+[中文](README.md) | **English** | [日本語](README_JA.md)
 
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-Skill-purple.svg)

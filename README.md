@@ -1,9 +1,10 @@
 # Forge Skill
 
-> 蒸馏自己，看清自己。
-> 蒸馏亲友，留住他们的余温与回声
+> 蒸馏自己，看清自己。  
+> 蒸馏亲友，留住他们的余温与回声  
 > 让 AI 不再是冰冷的吐字机器。
 
+**中文** | [English](README_EN.md) | [日本語](README_JA.md)
 
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-Skill-purple.svg)
